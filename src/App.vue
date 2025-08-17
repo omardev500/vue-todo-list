@@ -4,11 +4,20 @@
   const todoDone = ref('done')
   const todoTitle = ref('')
   const hideCompleted = ref(false)
-  const themeIcon = ref('fa-solid fa-moon')
   
+  const todosSortValue = ref('')
+  const daysSortValue = ref('')
+  
+  
+  if (!localStorage.getItem("theme")) { localStorage.setItem("theme", "light") }
   if (!localStorage.getItem("todos")) { localStorage.setItem("todos", JSON.stringify([])) }
   const localStorageTodos = JSON.parse(localStorage.getItem("todos"))
   let ID, todos;
+  
+  const themeIcon = localStorage.getItem("theme") == "dark" ? ref('fa-solid fa-moon') : ref('fa-solid fa-sun');
+  if (localStorage.getItem("theme") == "dark") {
+    document.querySelector("html").classList.add("dark");
+  } else { document.querySelector("html").classList.remove("dark"); }
   
   try {
     ID = localStorageTodos[localStorageTodos.length - 1].id + 1;
@@ -60,14 +69,39 @@
     if (document.querySelector("html").classList.contains("dark")) {
       document.querySelector("html").classList.remove("dark");
       themeIcon.value = 'fa-solid fa-sun'
+      localStorage.setItem("theme", "light")
     } else {
       document.querySelector("html").classList.add("dark");
       themeIcon.value = 'fa-solid fa-moon'
+      localStorage.setItem("theme", "dark")
     }
     
   }
-  // sorting days
+  function sortTodos() {
+    return todosSortValue.value == "latest"
+    ? todos.value.reverse()
+    : todos.value[0].id < todos.value[todos.value.length - 1].id 
+    ? todos.value
+    : todos.value.reverse()
+  }
   
+  function sortDays() {
+    switch(daysSortValue.value) {
+      case "today":
+        console.log("I'm here!")
+        console.log("Today's date: ", getTodayDate())
+        return todos.value.filter(t => { 
+          console.log(t);
+        })
+        break;
+      case "all-days":
+        return todos.value
+        break;
+    }
+  }
+  
+  watch(todosSortValue, sortTodos)
+  watch(daysSortValue, sortDays)
   
 </script>
 
@@ -85,16 +119,14 @@
       
       <h2 class="font-mono underline text-lg pt-3 italic">Todos</h2>
       <ul class="mt-2 mb-4 flex flex-col gap-2" v-if="ID > 0">
-        <li v-for="todo in filteredTodos" :key="todo.id" class="w-full p-1 pl-2 cursor-pointer z-40 rounded-lg flex hover:bg-gray-300 dark:hover:bg-gray-500 items-center justify-between relative" @click="todo.done = !todo.done" :class="todo.done ? 'bg-gray-300 dark:bg-gray-500' : ''">
-          <div>
-            <input type="checkbox" class="accent-purple-600 dark:accent-slate-500 text-md" :checked="todo.done" :id="getTodoInputId(todo)" @click="todo.done = !todo.done"  />
-            <label :for="getTodoInputId(todo)" class="pl-2 text-md cursor-pointer" :class="todo.done && todoDone" >{{ todo.title }}</label>
-          </div>
-          <div class="flex items-center justify-end">
-            <label class="relative inline-block z-43 cursor-pointer">
-              <i class="fa-solid fa-calendar-days text-lg cursor-pointer"></i>
-              <input v-bind="{value: todo.date !== '' ? todo.date : todayDate}" type="date" class="absolute w-full h-full opacity-0 top-0 left-0 cursor-pointer dark:bg-gray-600 rounded-lg opacity-90" @change="todo.date = $event.target.value" />
-            </label>
+        <li v-for="todo in filteredTodos" :key="todo.id" class="w-full pl-2 z-40 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 flex relative" :class="todo.done ? 'bg-gray-300 dark:bg-gray-500' : ''">
+          
+          <input type="checkbox" class="accent-purple-600 dark:accent-slate-500 text-md" :checked="todo.done" :id="getTodoInputId(todo)" @click="todo.done = !todo.done"  />
+          <label :for="getTodoInputId(todo)" class="cursor-pointer p-1 w-7/10 pl-2 text-md cursor-pointer" :class="todo.done && todoDone" >{{ todo.title }}</label>
+          
+          <div class="flex items-center justify-end w-3/10">
+  
+            <input v-bind="{value: todo.date || ''}" type="date" class="w-full h-full opacity-0 top-0 left-0 cursor-pointer dark:bg-gray-600 rounded-lg opacity-90" @change="todo.date = $event.target.value" />
             
             <button class="cursor-pointer rounded-sm z-41 hover:bg-red-400 dark:hover:bg-red-700 font-bold text-sm ml-3 p-1 mr-2" @click="removeTodo(todo)"><i class="fa-solid fa-x"></i></button>
           </div>
@@ -105,18 +137,9 @@
       
       <button class="absolute bottom-5 left-3 cursor-pointer bg-blue-200 p-2 rounded-sm text-sm mt-10  dark:bg-blue-800 border-2 border-gray-300 dark:border-gray-500" @click="hideCompleted = !hideCompleted">{{ hideCompleted ? "Show all todos?" : "Hide completed?" }}</button>
       
-      <select id="sort-days" class="dark:bg-gray-600 bg-gray-500 text-white border-2 border-gray-300 dark:border-gray-500 absolute bottom-5 left-1/2 -translate-x-1/2 p-2 rounded-md dark:hover:bg-gray-500 cursor-pointer">
-        <option value="all-days">All Days</option>
-        <option value="today">Today</option>
-        <option value="future">Future</option>
-        <option value="past">Past</option>
-      </select>
-      
-      <select id="sort-todos" class="dark:bg-pink-800 bg-lime-200 border-2 border-gray-300 dark:border-gray-500 absolute bottom-5 right-3 p-2 rounded-md dark:hover:bg-pink-700 cursor-pointer">
-        <option value="latest" title="latest added todos not in date box">Latest</option>
-        <option value="today" title="oldest added todos not in date box">Oldest</option>
-        <option value="future" title="sort todos by alphabets">Ascending</option>
-        <option value="past" title="reverse todos by alphabets">Descending</option>
+      <select class="dark:bg-pink-800 bg-lime-200 border-2 border-gray-300 dark:border-gray-500 absolute bottom-5 right-3 p-2 rounded-md dark:hover:bg-pink-700 cursor-pointer" @change="todosSortValue = $event.target.value">
+        <option value="oldest" title="Oldest added todos">Oldest</option>
+        <option value="latest" title="Latest added todos">Latest</option>
       </select>
       
     </section>
