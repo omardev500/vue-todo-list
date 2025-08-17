@@ -2,3 +2,10 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+:root {
+  --font-1: "Roboto", sans-serif;
+  --font-2: "Libertinus Serif", serif;
+}
+button {
+  font-family: var(--font-2)!important;
+}
