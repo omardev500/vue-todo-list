@@ -9,3 +9,11 @@
 button {
   font-family: var(--font-2)!important;
 }
+@keyframes todoAnime {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}

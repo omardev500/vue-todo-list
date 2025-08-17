@@ -116,8 +116,8 @@
         <button class="w-3/10 sm:w-1/4 rounded-tr-md rounded-br-md p-2 sm:p-3 bg-purple-600 hover:bg-purple-800 text-white font-bold dark:bg-slate-500 transition duration-300 dark:hover:bg-slate-400 cursor-pointer">Add Todo</button>
       </form>
 
-      <ul class="my-4 flex flex-col gap-1" v-if="ID > 0">
-        <li v-for="todo in filteredTodos" :key="todo.id" class="w-full p-[2px] pl-2 z-40 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 sm:flex relative" :class="todo.done ? 'bg-gray-300 dark:bg-gray-500' : ''">
+      <ul class="mt-4 mb-8 flex flex-col gap-1" v-if="ID > 0">
+        <li v-for="todo in filteredTodos" :key="todo.id" class="animate-[todoAnime_0.5s_ease-out] w-full p-[2px] pl-2 z-40 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 sm:flex relative" :class="todo.done ? 'bg-gray-300 dark:bg-gray-500' : ''">
           <input type="checkbox" class="accent-purple-600 inline-block dark:accent-slate-500 lg:text-xl" :checked="todo.done" :id="getTodoInputId(todo)" @click="todo.done = !todo.done"  />
           <label :for="getTodoInputId(todo)" class="inline-block cursor-pointer lg:p-[6px] p-[5px] w-9/10 sm:w-7/10 pl-2 cursor-pointer" :class="todo.done && todoDone" >{{ todo.title }}</label>
           
@@ -130,7 +130,7 @@
         </li>
       </ul>
       
-      <p v-else class="absolute top-1/2 left-1/2 -translate-1/2 font-bold">You don't have any todos yet.</p>
+      <p v-else class="animate-[todoAnime_0.5s_ease-out] absolute top-1/2 left-1/2 -translate-1/2 font-bold">You don't have any todos yet.</p>
       
       <button class="absolute bottom-5 left-3 cursor-pointer bg-blue-200 p-2 lg:p-3 rounded-sm mt-10  dark:bg-blue-800 border-2 border-gray-300 dark:border-gray-500" @click="hideCompleted = !hideCompleted">{{ hideCompleted ? "Show all todos?" : "Hide completed?" }}</button>
       
