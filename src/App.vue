@@ -35,8 +35,6 @@
     localStorage.setItem('todos', JSON.stringify(todos.value))
   }
   
-  watch(todos.value, updateStorage)
-  
   function addTodo() {
     todos.value.push({ id: ID++, title: todoTitle.value, done: false, date: "" })
     updateStorage()
@@ -100,6 +98,7 @@
     }
   }
   
+  watch(todos.value, updateStorage)
   watch(todosSortValue, sortTodos)
   watch(daysSortValue, sortDays)
   
@@ -111,18 +110,18 @@
     <button class="absolute top-5 right-4 bg-gray-200 text-orange-700 dark:text-blue-200 text-md dark:bg-gray-500 cursor-pointer p-2 rounded-lg" @click="toggleTheme"><i :class="themeIcon"></i></button>
   </header>
   <main class="pb-5">
-    <section class="relative w-screen mx-auto max-w-150 mt-4 rounded-lg min-h-110 p-3 bg-slate-200 dark:bg-slate-700 pb-14">
+    <section class="relative w-screen mx-auto max-w-150 2xl:text-2xl xl:text-xl lg:text-lg lg:max-w-170 lg:min-h-130 xl:max-w-200 lg:min-h-145 mt-4 rounded-lg min-h-110 p-3 bg-slate-200 dark:bg-slate-700 pb-14">
       <form @submit.prevent="addTodo" class="flex">
         <input type="text" placeholder="Enter todo title.." v-model="todoTitle" required autofocus class="w-3/4  rounded-tl-md rounded-bl-md border-3 text-black dark:text-white border-r-0 border-purple-600 focus:border-purple-800 dark:border-slate-500 dark:focus:border-slate-400 outline-0 pl-2 bg-slate-150 placeholder:text-gray-600  dark:bg-slate-700 text-lg dark:placeholder:text-gray-300 transition duration-200" />
         <button class="w-1/4 rounded-tr-md rounded-br-md p-3 bg-purple-600 hover:bg-purple-800 text-white font-bold dark:bg-slate-500 transition duration-300 dark:hover:bg-slate-400 cursor-pointer">Add Todo</button>
       </form>
       
       <h2 class="font-mono underline text-lg pt-3 italic">Todos</h2>
-      <ul class="mt-2 mb-4 flex flex-col gap-2" v-if="ID > 0">
-        <li v-for="todo in filteredTodos" :key="todo.id" class="w-full pl-2 z-40 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 flex relative" :class="todo.done ? 'bg-gray-300 dark:bg-gray-500' : ''">
+      <ul class="mt-2 mb-4 flex flex-col gap-1" v-if="ID > 0">
+        <li v-for="todo in filteredTodos" :key="todo.id" class="w-full p-[2px] pl-2 z-40 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 flex relative" :class="todo.done ? 'bg-gray-300 dark:bg-gray-500' : ''">
           
-          <input type="checkbox" class="accent-purple-600 dark:accent-slate-500 text-md" :checked="todo.done" :id="getTodoInputId(todo)" @click="todo.done = !todo.done"  />
-          <label :for="getTodoInputId(todo)" class="cursor-pointer p-1 w-7/10 pl-2 text-md cursor-pointer" :class="todo.done && todoDone" >{{ todo.title }}</label>
+          <input type="checkbox" class="accent-purple-600 dark:accent-slate-500 lg:text-xl" :checked="todo.done" :id="getTodoInputId(todo)" @click="todo.done = !todo.done"  />
+          <label :for="getTodoInputId(todo)" class="cursor-pointer lg:p-[6px] p-[5px] w-7/10 pl-2 cursor-pointer" :class="todo.done && todoDone" >{{ todo.title }}</label>
           
           <div class="flex items-center justify-end w-3/10">
   
@@ -133,9 +132,9 @@
         </li>
       </ul>
       
-      <p v-else class="absolute top-1/2 left-1/2 -translate-1/2 text-xl font-bold">You don't have any todos yet.</p>
+      <p v-else class="absolute top-1/2 left-1/2 -translate-1/2 font-bold">You don't have any todos yet.</p>
       
-      <button class="absolute bottom-5 left-3 cursor-pointer bg-blue-200 p-2 rounded-sm text-sm mt-10  dark:bg-blue-800 border-2 border-gray-300 dark:border-gray-500" @click="hideCompleted = !hideCompleted">{{ hideCompleted ? "Show all todos?" : "Hide completed?" }}</button>
+      <button class="absolute bottom-5 left-3 cursor-pointer bg-blue-200 p-2 lg:p-3 rounded-sm mt-10  dark:bg-blue-800 border-2 border-gray-300 dark:border-gray-500" @click="hideCompleted = !hideCompleted">{{ hideCompleted ? "Show all todos?" : "Hide completed?" }}</button>
       
       <select class="dark:bg-pink-800 bg-lime-200 border-2 border-gray-300 dark:border-gray-500 absolute bottom-5 right-3 p-2 rounded-md dark:hover:bg-pink-700 cursor-pointer" @change="todosSortValue = $event.target.value">
         <option value="oldest" title="Oldest added todos">Oldest</option>
